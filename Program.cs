@@ -10,14 +10,14 @@ public class Program
     {
         Random random = new Random();
         List<Criminal> criminals = new List<Criminal>();
-        CreaterOfCriminals createrOfCriminals = new CreaterOfCriminals();
+        CriminalsCreater createrOfCriminals = new CriminalsCreater();
 
         criminals = createrOfCriminals.CreateCriminals(random);
         Console.WriteLine("Before amnesty");
         ShowCriminals(criminals);
         int quantityCriminalsBeforAmnesty = criminals.Count;
 
-        Search search = new Search();
+        Searcher search = new Searcher();
         criminals = search.GoExceptAntyguwernement(criminals);
         Console.WriteLine("After amnesty");
         ShowCriminals(criminals);
@@ -36,8 +36,19 @@ public class Program
 
 public class Criminal
 {
+    public Criminal(Names name, Nationalitys nationality, Articles article, int growth, int weigfh, bool isFree)
+    {
+        Name = name;
+        Nationality = nationality;
+        Growth = growth;
+        Weight = weigfh;
+        Id = IDS++;
+        IsFree = isFree;
+        Article = article;
+    }
+
     public static int IDS { get; private set; } = 0;
-    public int ID { get; private set; }
+    public int Id { get; private set; }
     public Names Name { get; private set; }
     public Nationalitys Nationality { get; private set; }
     public Articles Article { get; private set; }
@@ -45,22 +56,11 @@ public class Criminal
     public int Weight { get; private set; }
     public bool IsFree { get; private set; }
 
-    public Criminal(Names name, Nationalitys nationality, Articles article, int growth, int weigfh, bool isFree)
-    {
-        Name = name;
-        Nationality = nationality;
-        Growth = growth;
-        Weight = weigfh;
-        ID = IDS++;
-        IsFree = isFree;
-        Article = article;
-    }
-
     public void ShowData() =>
-        Console.WriteLine($"ID: {ID} Name: {Name} Nationality: {Nationality} Article: {Article} Growth: {Growth} Weight: {Weight} Is free: {IsFree}");
+        Console.WriteLine($"ID: {Id} Name: {Name} Nationality: {Nationality} Article: {Article} Growth: {Growth} Weight: {Weight} Is free: {IsFree}");
 }
 
-public class CreaterOfCriminals
+public class CriminalsCreater
 {
     public List<Criminal> CreateCriminals(Random random)
     {
@@ -122,24 +122,11 @@ public enum Articles
     MaxValue
 }
 
-public class Search
+public class Searcher
 {
     public List<Criminal> GoExceptAntyguwernement(List<Criminal> criminals)
     {
-        var filtredCriminals = criminals.Where(element => element.Article != Articles.Antyguwernement || (element.Article == Articles.Antyguwernement && element.IsFree == true));
+        IEnumerable<Criminal> filtredCriminals = criminals.Where(element => element.Article != Articles.Antyguwernement || (element.Article == Articles.Antyguwernement && element.IsFree == true));
         return filtredCriminals.ToList();
-    }
-}
-
-public static class Utils
-{
-    public static int ReadInt(string text = "", int minValue = int.MinValue, int maxValue = int.MaxValue)
-    {
-        int number;
-
-        do Console.Write(text + " ");
-        while (int.TryParse(Console.ReadLine(), out number) == false || number > maxValue || number < minValue);
-
-        return number;
     }
 }
